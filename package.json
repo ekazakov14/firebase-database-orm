@@ -1,0 +1,32 @@
+{
+  "name": "firebase-tatabase-orm",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --watch --mode=development --port=3000 --hot --inline",
+    "build": "webpack --mode=production"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^7.14.4",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/plugin-proposal-decorators": "^7.10.1",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-typescript": "^7.10.1",
+    "@types/jest": "^25.2.3",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-jest": "^26.0.1",
+    "html-webpack-plugin": "^4.3.0",
+    "jest": "^26.0.1",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
