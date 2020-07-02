@@ -28,16 +28,26 @@ describe('test Model class', () => {
   let userFirstName: 'John';
   let userLastName: 'Doe';
 
+  const props = {
+    firstName: userFirstName,
+    lastName: userLastName,
+  };
+
   beforeEach(() => {
-    user = new User({
-      firstName: userFirstName,
-      lastName: userLastName,
-    });
+    user = new User(props);
   });
 
   test('correct properties setting in parent constructor', () => {
     expect(user.firstName).toBe(userFirstName);
     expect(user.lastName).toBe(userLastName);
+  });
+
+  test('correct props returned from getProps()', () => {
+    expect(user.getProps()).toEqual(props);
+  });
+
+  test('correct fields return from getField()', () => {
+    expect(User.getFields()).toEqual(Object.keys(props));
   });
 
   test('throw error in costructor of model with wrong fields', () => {

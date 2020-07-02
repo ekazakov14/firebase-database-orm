@@ -7,14 +7,16 @@ import { FIELDS_KEY } from './constants/model';
 abstract class Model<T> {
   protected createdAt: Date;
   protected updatedAt: Date;
-  protected routeName = undefined;
+  public static routeName: string;
+  protected self = Object.getPrototypeOf(this).constructor;
+  private props = typeof this;
 
   constructor(props: PropertiesOf<T>) {
-    const fields = this.getFields() as string[];
+    const fields = this.self.getFields() as string[];
 
     if (fields) {
       Object.keys(props).forEach((key) => {
-        if ( !fields.includes(key) ) {
+        if (!fields.includes(key)) {
           throw new Error(WRONG_PROPERTIES);
         }
 
@@ -25,12 +27,8 @@ abstract class Model<T> {
     }
   }
 
-  public getFields(): Extract<(OnlyPropertiesKeysOf<T>), string>[] {
-    return Reflect.getMetadata(FIELDS_KEY, this.constructor);
-  }
-
   public getProps(): PropertiesOf<T> {
-    const fields = this.getFields();
+    const fields = this.self.getFields();
 
     return fields.reduce((obj: any, current: Extract<(OnlyPropertiesKeysOf<T>), string>) => ({
       ...obj,
@@ -38,8 +36,9 @@ abstract class Model<T> {
     }), {});
   }
 
-  public getRouteName(): string {
-    return this.routeName ?? `${this.constructor.name.toLocaleLowerCase()}s`;
+  public static getFields() {
+    const props = typeof this;
+    return Reflect.getMetadata(FIELDS_KEY, this) as Extract<(OnlyPropertiesKeysOf<typeof props>), string>[];
   }
 }
 
