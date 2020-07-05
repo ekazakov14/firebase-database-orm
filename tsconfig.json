@@ -3,13 +3,11 @@
     "outDir": "./dist/",
     "module": "esnext",
     "target": "es5",
-    "jsx": "react",
     "allowJs": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "lib": [
       "dom",
-      "dom.iterable",
       "esnext",
     ],
     "skipLibCheck": true,
@@ -20,6 +18,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "sourceMap": true
   },
   "include": [
     "src",

@@ -15,7 +15,7 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 300,
   },
-  devtool: 'eval',
+  devtool: 'source-map',
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
