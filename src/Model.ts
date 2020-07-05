@@ -3,16 +3,16 @@ import PropertiesOf from './types/PropertiesOf';
 import OnlyPropertiesKeysOf from './types/OnlyPropertiesKeysOf';
 import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from './constants/error';
 import { FIELDS_KEY } from './constants/model';
+import FieldDescriptor from './types/FieldDescriptor';
 
 abstract class Model<T> {
   protected createdAt: Date;
   protected updatedAt: Date;
   public static routeName: string;
   protected self = Object.getPrototypeOf(this).constructor;
-  private props = typeof this;
 
   constructor(props: PropertiesOf<T>) {
-    const fields = this.self.getFields() as string[];
+    const fields = this.self.getFieldsKeys() as string[];
 
     if (fields) {
       Object.keys(props).forEach((key) => {
@@ -36,9 +36,14 @@ abstract class Model<T> {
     }), {});
   }
 
-  public static getFields() {
+  public static getFields(): FieldDescriptor[] {
     const props = typeof this;
-    return Reflect.getMetadata(FIELDS_KEY, this) as Extract<(OnlyPropertiesKeysOf<typeof props>), string>[];
+    return Reflect.getMetadata(FIELDS_KEY, this) as FieldDescriptor[];
+  }
+
+  public static getFieldsKeys(): string[]|null {
+    const fields = this.getFields();
+    return fields ? fields.map((field) => field.key) : null;
   }
 }
 

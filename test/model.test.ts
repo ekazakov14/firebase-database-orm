@@ -23,6 +23,19 @@ class ModelWithWrongFields extends Model<ModelWithWrongFields> {
   public b: string;
 }
 
+class CustomModel extends Model<CustomModel> {
+  @Field()
+  public firstName: string;
+
+  @Field()
+  public lastName: string;
+
+  @Field({
+    dbKey: 'db_age',
+  })
+  public age: number;
+}
+
 describe('test Model class', () => {
   let user: User;
   let userFirstName: 'John';
@@ -46,8 +59,25 @@ describe('test Model class', () => {
     expect(user.getProps()).toEqual(props);
   });
 
-  test('correct fields return from getField()', () => {
-    expect(User.getFields()).toEqual(Object.keys(props));
+  test('correct fields return from getFields()', () => {
+    expect(CustomModel.getFields()).toEqual([
+      {
+        dbKey: 'firstName',
+        key: 'firstName',
+      },
+      {
+        dbKey: 'lastName',
+        key: 'lastName',
+      },
+      {
+        dbKey: 'db_age',
+        key: 'age',
+      },
+    ]);
+  });
+
+  test('correct fields return from getFieldsKeys()', () => {
+    expect(User.getFieldsKeys()).toEqual(Object.keys(props));
   });
 
   test('throw error in costructor of model with wrong fields', () => {
