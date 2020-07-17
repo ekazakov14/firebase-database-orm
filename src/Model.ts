@@ -7,8 +7,11 @@ import FieldDescriptor from './types/FieldDescriptor';
 
 abstract class Model<T> {
   protected createdAt: Date;
+
   protected updatedAt: Date;
+
   public static routeName: string;
+
   protected self = Object.getPrototypeOf(this).constructor;
 
   constructor(props: PropertiesOf<T>) {
@@ -37,7 +40,6 @@ abstract class Model<T> {
   }
 
   public static getFields(): FieldDescriptor[] {
-    const props = typeof this;
     return Reflect.getMetadata(FIELDS_KEY, this) as FieldDescriptor[];
   }
 

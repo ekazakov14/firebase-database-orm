@@ -1,10 +1,11 @@
-import PropertiesOf from './types/PropertiesOf';
 import firebase from 'firebase';
+import PropertiesOf from './types/PropertiesOf';
 import FirebaseKey from './types/FirebaseKey';
+import ClassExtendedModel from './types/ClassExtendedModel';
 import Model from './Model';
 
 class BaseRepository<T extends Model<T>> {
-  public constructor(protected modelConstructor: { new (...args: any): T, name: string, routeName: string }) {
+  public constructor(protected modelConstructor: ClassExtendedModel<T>) {
   }
 
   public getRoute(additional?: string): string {
@@ -30,8 +31,8 @@ class BaseRepository<T extends Model<T>> {
 
   public async find(condition: Partial<PropertiesOf<T>>): Promise<any> {
     const firstKey = Object.keys(condition)[0];
-    const snapshot = await 
-      firebase.database()
+    const snapshot = await
+    firebase.database()
       .ref(this.getRoute())
       .orderByChild(firstKey)
       .equalTo(condition[firstKey])

@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import Model from '../src/Model';
 import Field from '../src/decorators/Field';
 import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '../src/constants/error';

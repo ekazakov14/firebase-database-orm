@@ -6,6 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "webpack-dev-server --watch --mode=development --port=3000 --hot --inline",
+    "lint": "eslint --ext .ts ./",
+    "lint:fix": "eslint --fix --ext .ts ./",
     "build": "webpack --mode=production"
   },
   "author": "",
@@ -21,8 +23,12 @@
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
     "@types/jest": "^25.2.3",
+    "@typescript-eslint/eslint-plugin": "^3.1.10",
     "awesome-typescript-loader": "^5.2.1",
     "babel-jest": "^26.0.1",
+    "eslint": "^7.4.0",
+    "eslint-config-airbnb-typescript": "^8.0.2",
+    "eslint-plugin-import": "^2.20.1",
     "html-webpack-plugin": "^4.3.0",
     "jest": "^26.0.1",
     "typescript": "^3.9.5",

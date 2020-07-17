@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import firebase from 'firebase';
 import Model from '../src/Model';
 import Field from '../src/decorators/Field';
@@ -29,7 +31,7 @@ const testUserId = '123';
 
 jest.mock('firebase', () => {
   const snapshot = (data) => ({
-      val: () => data,
+    val: () => data,
   });
 
   return {
@@ -40,7 +42,7 @@ jest.mock('firebase', () => {
       set: jest.fn(() => Promise.resolve(true)),
       orderByChild: jest.fn((key) => ({
         equalTo: (value) => ({
-          once: (event) => event === 'value' ? snapshot({anykey: {[key]: value}}) : undefined,
+          once: (event) => (event === 'value' ? snapshot({ anykey: { [key]: value } }) : undefined),
         }),
       })),
     }),
@@ -48,11 +50,10 @@ jest.mock('firebase', () => {
 });
 
 describe('test BaseRepository class', () => {
-
-  let user = new User({
+  const user = new User({
     firstName: 'John',
     lastName: 'Doe',
-    age: 123
+    age: 123,
   });
   let userRepository: BaseRepository<User>;
 
@@ -69,6 +70,7 @@ describe('test BaseRepository class', () => {
   });
 
   test('getRoute() should return right route for class with custom routeName', () => {
+    // eslint-disable-next-line max-len
     const userWithCustomRouteRepository = new BaseRepository<UserWithCustomRoute>(UserWithCustomRoute);
     expect(userWithCustomRouteRepository.getRoute()).toBe(UserWithCustomRoute.routeName);
   });
@@ -83,12 +85,12 @@ describe('test BaseRepository class', () => {
     isFirebaseRefToBe(userRepository.getRoute(testUserId));
   });
 
-  test('getAll() should return Object.values(data)', async() => {
+  test('getAll() should return Object.values(data)', async () => {
     const value = await userRepository.getAll();
     expect(value).toStrictEqual(Object.values(mockData));
   });
 
-  test('getAll() should use right route', async() => {
+  test('getAll() should use right route', async () => {
     await userRepository.getAll();
     isFirebaseRefToBe(userRepository.getRoute());
   });
@@ -96,7 +98,7 @@ describe('test BaseRepository class', () => {
   test('find() should return right data', async () => {
     const field = 'firstName';
     const value = 'John';
-    const findObj = {[field]: value};
+    const findObj = { [field]: value };
 
     const findedObj = await userRepository.find(findObj);
     expect(findedObj).toStrictEqual([findObj]);
@@ -125,5 +127,4 @@ describe('test BaseRepository class', () => {
     await userRepository.save(user, testUserId);
     isFirebaseRefToBe(userRepository.getRoute(testUserId));
   });
-
 });
