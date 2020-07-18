@@ -14,9 +14,9 @@ jobs:
       - name: Cache NPM dependencies
         uses: actions/cache@v1
         with:
-          path: ./
-          key: ${{ runner.OS }}-cache-yarn-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: ${{ runner.OS }}-cache-yarn
+          path: ./node_modules
+          key: ${{ runner.OS }}-cache-${{ hashFiles('./yarn.lock') }}
+          restore-keys: ${{ runner.OS }}-cache
       - name: Install NPM dependencies
         run: yarn install
       - name: Tests
