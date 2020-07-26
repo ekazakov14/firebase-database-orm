@@ -22,11 +22,26 @@ class UserWithCustomRoute extends Model<UserWithCustomRoute> {
   public static routeName = 'custom';
 }
 
+const currentDate = new Date();
+
 const mockData = {
   firstName: 'John',
   lastName: 'Doe',
-  age: '13',
+  age: 13,
 };
+
+const mockDataToWrite = {
+  ...mockData,
+  createdAt: +currentDate,
+  updatedAt: +currentDate,
+};
+
+const processedProperties = {
+  ...mockData,
+  createdAt: new Date(currentDate),
+  updatedAt: new Date(currentDate),
+};
+
 const testUserId = '123';
 
 jest.mock('firebase', () => {
@@ -37,7 +52,7 @@ jest.mock('firebase', () => {
   return {
     database: jest.fn().mockReturnValue({
       ref: jest.fn().mockReturnThis(),
-      once: jest.fn(() => Promise.resolve(snapshot(mockData))),
+      once: jest.fn(() => Promise.resolve(snapshot(mockDataToWrite))),
       push: jest.fn(() => Promise.resolve(true)),
       set: jest.fn(() => Promise.resolve(true)),
       orderByChild: jest.fn((key) => ({
@@ -50,22 +65,23 @@ jest.mock('firebase', () => {
 });
 
 describe('test BaseRepository class', () => {
-  const user = new User({
-    firstName: 'John',
-    lastName: 'Doe',
-    age: 123,
-  });
+  const user = new User(mockData);
   let userRepository: BaseRepository<User>;
 
   const isFirebaseRefToBe = (route) => {
     expect(firebase.database().ref).toHaveBeenCalledWith(route);
   };
 
+  const checkTimestampsInObject = (obj) => {
+    expect(typeof obj.createdAt).toBe('number');
+    expect(typeof obj.updatedAt).toBe('number');
+  };
+
   beforeEach(() => {
     userRepository = new BaseRepository<User>(User);
   });
 
-  test('getRoute() short retun right route for default class', () => {
+  test('getRoute() short return right route for default class', () => {
     expect(userRepository.getRoute()).toBe(`${User.name.toLocaleLowerCase()}s`);
   });
 
@@ -77,17 +93,12 @@ describe('test BaseRepository class', () => {
 
   test('get() should return data', async () => {
     const value = await userRepository.get(testUserId);
-    expect(value).toBe(mockData);
+    expect(value).toStrictEqual(processedProperties);
   });
 
   test('get() should use right route', async () => {
     await userRepository.get(testUserId);
     isFirebaseRefToBe(userRepository.getRoute(testUserId));
-  });
-
-  test('getAll() should return Object.values(data)', async () => {
-    const value = await userRepository.getAll();
-    expect(value).toStrictEqual(Object.values(mockData));
   });
 
   test('getAll() should use right route', async () => {
@@ -105,12 +116,14 @@ describe('test BaseRepository class', () => {
   });
 
   test('find() should use right route', async () => {
+    await userRepository.find({firstName: '123'});
     isFirebaseRefToBe(userRepository.getRoute());
   });
 
-  test('save() without key should push data', async () => {
+  test('save() without key should have base props', async () => {
     await userRepository.save(user);
-    expect(firebase.database().ref().push).toHaveBeenCalledWith(user.getProps());
+    const calledWith = jest.spyOn(firebase.database().ref(), 'push').mock.calls[0][0];
+    expect(calledWith).toMatchObject(user.getProps());
   });
 
   test('save() should use right route without key', async () => {
@@ -118,9 +131,22 @@ describe('test BaseRepository class', () => {
     isFirebaseRefToBe(userRepository.getRoute());
   });
 
-  test('save() with key should set data', async () => {
+  test('save() without key should have timestamps', async () => {
+    await userRepository.save(user);
+    const calledWith = jest.spyOn(firebase.database().ref(), 'push').mock.calls[0][0];
+    checkTimestampsInObject(calledWith);
+  });
+
+  test('save() with key should have base props', async () => {
     await userRepository.save(user, testUserId);
-    expect(firebase.database().ref().set).toHaveBeenCalledWith(user.getProps());
+    const calledWith = jest.spyOn(firebase.database().ref(), 'set').mock.calls[0][0];
+    expect(calledWith).toMatchObject(user.getProps());
+  });
+
+  test('save() with key should have timestamps', async () => {
+    await userRepository.save(user, testUserId);
+    const calledWith = jest.spyOn(firebase.database().ref(), 'set').mock.calls[0][0];
+    checkTimestampsInObject(calledWith);
   });
 
   test('save() should use right route with key', async () => {
