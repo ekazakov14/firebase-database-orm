@@ -26,7 +26,7 @@ class BaseRepository<T extends Model<T>> {
   public async get(key: FirebaseKey): Promise<ProcessedProperties<T> | null> {
     const response = await firebase.database().ref(`${this.getRoute()}/${key}`).once('value');
     const value = response.val();
-    
+
     return value ? this.getProcessedProps(value) : null;
   }
 
@@ -37,11 +37,11 @@ class BaseRepository<T extends Model<T>> {
   public async find(condition: Partial<PropertiesToWrite<T>>): Promise<any> {
     const firstKey = Object.keys(condition)[0];
     const snapshot = await
-      firebase.database()
-        .ref(this.getRoute())
-        .orderByChild(firstKey)
-        .equalTo(condition[firstKey])
-        .once('value');
+    firebase.database()
+      .ref(this.getRoute())
+      .orderByChild(firstKey)
+      .equalTo(condition[firstKey])
+      .once('value');
 
     const value = snapshot.val();
     return value ? Object.values(value) : null;
@@ -71,21 +71,17 @@ class BaseRepository<T extends Model<T>> {
     return key;
   }
 
-  protected getPreparedProps(entity: T, timestamps: UnixTimestamps): PropertiesToWrite<T> {
-    return {
-      ...entity.getProps(),
-      createdAt: timestamps.createdAt,
-      updatedAt: timestamps.updatedAt,
-    };
-  }
+  protected getPreparedProps = (entity: T, timestamps: UnixTimestamps): PropertiesToWrite<T> => ({
+    ...entity.getProps(),
+    createdAt: timestamps.createdAt,
+    updatedAt: timestamps.updatedAt,
+  });
 
-  protected getProcessedProps(data: PropertiesToWrite<T>): ProcessedProperties<T> {
-    return {
-      ...data,
-      createdAt: new Date(data.createdAt),
-      updatedAt: new Date(data.updatedAt),
-    };
-  }
+  protected getProcessedProps = (data: PropertiesToWrite<T>): ProcessedProperties<T> => ({
+    ...data,
+    createdAt: new Date(data.createdAt),
+    updatedAt: new Date(data.updatedAt),
+  });
 }
 
 export default BaseRepository;

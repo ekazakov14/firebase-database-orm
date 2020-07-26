@@ -116,7 +116,7 @@ describe('test BaseRepository class', () => {
   });
 
   test('find() should use right route', async () => {
-    await userRepository.find({firstName: '123'});
+    await userRepository.find({ firstName: '123' });
     isFirebaseRefToBe(userRepository.getRoute());
   });
 

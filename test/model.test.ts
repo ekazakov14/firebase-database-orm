@@ -40,8 +40,8 @@ class CustomModel extends Model<CustomModel> {
 
 describe('test Model class', () => {
   let user: User;
-  let userFirstName = 'John';
-  let userLastName = 'Doe';
+  const userFirstName = 'John';
+  const userLastName = 'Doe';
 
   const props = {
     firstName: userFirstName,
