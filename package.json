@@ -10,6 +10,11 @@
     "lint:fix": "eslint --fix --ext .ts ./",
     "build": "webpack --mode=production"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint:fix"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -25,6 +30,7 @@
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-plugin-import": "^2.20.1",
     "html-webpack-plugin": "^4.3.0",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
     "ts-jest": "^26.1.3",
     "typescript": "^3.9.5",
