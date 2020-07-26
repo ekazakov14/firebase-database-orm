@@ -31,7 +31,7 @@ abstract class Model<T> {
   }
 
   public getProps(): PropertiesOf<T> {
-    const fields = this.self.getFields();
+    const fields = this.self.getFieldsKeys();
 
     return fields.reduce((obj: any, current: Extract<(OnlyPropertiesKeysOf<T>), string>) => ({
       ...obj,

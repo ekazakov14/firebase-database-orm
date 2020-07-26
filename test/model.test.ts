@@ -58,11 +58,11 @@ describe('test Model class', () => {
   });
 
   test('correct props returned from getProps()', () => {
-    expect(user.getProps()).toEqual(props);
+    expect(user.getProps()).toStrictEqual(props);
   });
 
   test('correct fields return from getFields()', () => {
-    expect(CustomModel.getFields()).toEqual([
+    expect(CustomModel.getFields()).toStrictEqual([
       {
         dbKey: 'firstName',
         key: 'firstName',
@@ -79,7 +79,7 @@ describe('test Model class', () => {
   });
 
   test('correct fields return from getFieldsKeys()', () => {
-    expect(User.getFieldsKeys()).toEqual(Object.keys(props));
+    expect(User.getFieldsKeys()).toStrictEqual(Object.keys(props));
   });
 
   test('throw error in costructor of model with wrong fields', () => {
