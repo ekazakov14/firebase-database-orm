@@ -13,20 +13,20 @@ class BaseRepository<T extends Model<T>> {
     return additional ? `${baseRoute}/${additional}` : baseRoute;
   }
 
-  public async get(key: FirebaseKey) {
+  public async get(key: FirebaseKey): Promise<PropertiesOf<T>|null> {
     const response = await firebase.database().ref(`${this.getRoute()}/${key}`).once('value');
-    return await response.val() as PropertiesOf<T>;
+    return await response.val() as PropertiesOf<T>|null;
   }
 
   public save(entity: T, key?: FirebaseKey): Promise<FirebaseKey> {
     return key ? this.set(entity, key) : this.push(entity);
   }
 
-  public async getAll(): Promise<T[]|null> {
+  public async getAll(): Promise<T[]|[]> {
     const response = await firebase.database().ref(this.getRoute()).once('value');
     const value = await response.val() as T[];
 
-    return value ? Object.values(value) : null;
+    return value ? Object.values(value) : [];
   }
 
   public async find(condition: Partial<PropertiesOf<T>>): Promise<any> {
