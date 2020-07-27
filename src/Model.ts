@@ -6,10 +6,6 @@ import { FIELDS_KEY } from './constants/model';
 import FieldDescriptor from './types/FieldDescriptor';
 
 abstract class Model<T> {
-  protected createdAt: Date;
-
-  protected updatedAt: Date;
-
   public static routeName: string;
 
   protected self = Object.getPrototypeOf(this).constructor;
