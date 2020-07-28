@@ -1,51 +1,20 @@
-/* eslint-disable max-classes-per-file */
-
-import Model from '../src/Model';
-import Field from '../src/decorators/Field';
+import {
+  User,
+  ModelWithoutFields,
+  ModelWithWrongFields,
+} from './common/User';
 import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '../src/constants/error';
-
-class User extends Model<User> {
-  @Field()
-  public firstName: string;
-
-  @Field()
-  public lastName: string;
-}
-
-class ModelWithoutFields extends Model<ModelWithoutFields> {
-  public a: string;
-
-  public b: string;
-}
-
-class ModelWithWrongFields extends Model<ModelWithWrongFields> {
-  @Field()
-  public a: string;
-
-  public b: string;
-}
-
-class CustomModel extends Model<CustomModel> {
-  @Field()
-  public firstName: string;
-
-  @Field()
-  public lastName: string;
-
-  @Field({
-    dbKey: 'db_age',
-  })
-  public age: number;
-}
 
 describe('test Model class', () => {
   let user: User;
-  const userFirstName = 'John';
-  const userLastName = 'Doe';
+  const firstName = 'John';
+  const lastName = 'Doe';
+  const age = 23;
 
   const props = {
-    firstName: userFirstName,
-    lastName: userLastName,
+    firstName,
+    lastName,
+    age,
   };
 
   beforeEach(() => {
@@ -53,8 +22,8 @@ describe('test Model class', () => {
   });
 
   test('correct properties setting in parent constructor', () => {
-    expect(user.firstName).toBe(userFirstName);
-    expect(user.lastName).toBe(userLastName);
+    expect(user.firstName).toBe(firstName);
+    expect(user.lastName).toBe(lastName);
   });
 
   test('correct props returned from getProps()', () => {
@@ -62,7 +31,7 @@ describe('test Model class', () => {
   });
 
   test('correct fields return from getFields()', () => {
-    expect(CustomModel.getFields()).toStrictEqual([
+    expect(User.getFields()).toStrictEqual([
       {
         dbKey: 'firstName',
         key: 'firstName',

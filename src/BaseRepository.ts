@@ -5,6 +5,8 @@ import FirebaseKey from './types/FirebaseKey';
 import ClassExtendedModel from './types/ClassExtendedModel';
 import Model from './Model';
 import UnixTimestamps from './types/UnixTimestamps';
+import PropertiesOf from './types/PropertiesOf';
+import DateTimestamps from './types/DateTimestamps';
 
 class BaseRepository<T extends Model<T>> {
   public constructor(protected modelConstructor: ClassExtendedModel<T>) {
@@ -49,38 +51,61 @@ class BaseRepository<T extends Model<T>> {
 
   protected async push(entity: T): Promise<FirebaseKey> {
     const currentTimestamp = +new Date();
-    const props = this.getPreparedProps(entity, {
-      createdAt: currentTimestamp,
-      updatedAt: currentTimestamp,
-    });
+    const props = this.getPreparedProps(entity.getProps(), currentTimestamp);
 
     const response = await firebase.database().ref(this.getRoute()).push(props);
     return response.key;
   }
 
   protected async set(entity: T, key: FirebaseKey): Promise<FirebaseKey> {
-    const currentTimestamp = +new Date();
-
     const existingValue = await this.get(key);
-    const props = this.getPreparedProps(entity, {
-      createdAt: existingValue !== null ? +existingValue.createdAt : currentTimestamp,
-      updatedAt: currentTimestamp,
-    });
+    let props = entity.getProps();
+
+    if (existingValue) {
+      props = this.getPreparedProps(props, +existingValue.createdAt);
+    }
 
     await firebase.database().ref(`${this.getRoute()}/${key}`).set(props);
     return key;
   }
 
-  protected getPreparedProps = (entity: T, timestamps: UnixTimestamps): PropertiesToWrite<T> => ({
-    ...entity.getProps(),
-    createdAt: timestamps.createdAt,
-    updatedAt: timestamps.updatedAt,
-  });
+  protected getPreparedProps = (data: PropertiesOf<T>, createdAt?: number): PropertiesToWrite<T> => {
+    let processedData = data;
+    const isTimestampsNeeded = this.modelConstructor.timestamps;
 
-  protected getProcessedProps = (data: PropertiesToWrite<T>): ProcessedProperties<T> => ({
-    ...data,
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
+    if (isTimestampsNeeded) {
+      const timestamps = this.getTimestamps(createdAt);
+
+      processedData = {
+        ...data,
+        ...timestamps,
+      };
+    }
+
+    return processedData;
+  };
+
+  protected getProcessedProps = ({ createdAt, updatedAt, ...data }: PropertiesToWrite<T>): ProcessedProperties<T> => {
+    const parsedTimestamps = this.parseTimestamps({ createdAt, updatedAt });
+
+    return {
+      ...data as PropertiesOf<T>,
+      ...parsedTimestamps,
+    };
+  };
+
+  protected getTimestamps = (createdAt?: number): UnixTimestamps => {
+    const currentTimestamp = +new Date();
+
+    return {
+      createdAt: createdAt || currentTimestamp,
+      updatedAt: currentTimestamp,
+    };
+  };
+
+  protected parseTimestamps = ({ createdAt, updatedAt }: UnixTimestamps): DateTimestamps => ({
+    createdAt: new Date(createdAt),
+    updatedAt: new Date(updatedAt),
   });
 }
 

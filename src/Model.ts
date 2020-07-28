@@ -8,6 +8,8 @@ import FieldDescriptor from './types/FieldDescriptor';
 abstract class Model<T> {
   public static routeName: string;
 
+  public static timestamps: boolean = true;
+
   protected self = Object.getPrototypeOf(this).constructor;
 
   constructor(props: PropertiesOf<T>) {

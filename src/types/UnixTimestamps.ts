@@ -1,6 +1,6 @@
 type UnixTimestamps = {
-  createdAt: number,
-  updatedAt: number,
+  createdAt?: number,
+  updatedAt?: number,
 };
 
 export default UnixTimestamps;

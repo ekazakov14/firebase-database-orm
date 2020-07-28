@@ -1,26 +1,11 @@
 /* eslint-disable max-classes-per-file */
 
 import firebase from 'firebase';
-import Model from '../src/Model';
-import Field from '../src/decorators/Field';
 import BaseRepository from '../src/BaseRepository';
-
-class User extends Model<User> {
-  @Field()
-  public firstName: string;
-
-  @Field()
-  public lastName: string;
-
-  @Field({
-    dbKey: 'db_age',
-  })
-  public age: number;
-}
-
-class UserWithCustomRoute extends Model<UserWithCustomRoute> {
-  public static routeName = 'custom';
-}
+import {
+  User,
+  UserWithCustomRoute,
+} from './common/User';
 
 const currentDate = new Date();
 
@@ -70,11 +55,6 @@ describe('test BaseRepository class', () => {
 
   const isFirebaseRefToBe = (route) => {
     expect(firebase.database().ref).toHaveBeenCalledWith(route);
-  };
-
-  const checkTimestampsInObject = (obj) => {
-    expect(typeof obj.createdAt).toBe('number');
-    expect(typeof obj.updatedAt).toBe('number');
   };
 
   beforeEach(() => {
@@ -131,22 +111,10 @@ describe('test BaseRepository class', () => {
     isFirebaseRefToBe(userRepository.getRoute());
   });
 
-  test('save() without key should have timestamps', async () => {
-    await userRepository.save(user);
-    const calledWith = jest.spyOn(firebase.database().ref(), 'push').mock.calls[0][0];
-    checkTimestampsInObject(calledWith);
-  });
-
   test('save() with key should have base props', async () => {
     await userRepository.save(user, testUserId);
     const calledWith = jest.spyOn(firebase.database().ref(), 'set').mock.calls[0][0];
     expect(calledWith).toMatchObject(user.getProps());
-  });
-
-  test('save() with key should have timestamps', async () => {
-    await userRepository.save(user, testUserId);
-    const calledWith = jest.spyOn(firebase.database().ref(), 'set').mock.calls[0][0];
-    checkTimestampsInObject(calledWith);
   });
 
   test('save() should use right route with key', async () => {
