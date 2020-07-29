@@ -2,10 +2,8 @@
 
 import firebase from 'firebase';
 import BaseRepository from '../src/BaseRepository';
-import {
-  User,
-  UserWithoutTimestamps,
-} from './common/User';
+import Model from './common/Model';
+import ModelWithoutTimestamps from './common/ModelWithoutTImestamps';
 import UnixTimestamps from '../src/types/UnixTimestamps';
 
 const currentDate = new Date();
@@ -43,9 +41,9 @@ jest.mock('firebase', () => {
 });
 
 describe('test BaseRepository class', () => {
-  const user = new User(mockData);
-  let userRepository: BaseRepository<User>;
-  let userWTRepository: BaseRepository<UserWithoutTimestamps>;
+  const user = new Model(mockData);
+  let userRepository: BaseRepository<Model>;
+  let userWTRepository: BaseRepository<ModelWithoutTimestamps>;
 
   const isObjectHaveTimestamps = ({ createdAt, updatedAt }: UnixTimestamps) => (
     typeof createdAt === 'number' && typeof updatedAt === 'number'
@@ -56,8 +54,8 @@ describe('test BaseRepository class', () => {
   );
 
   beforeEach(() => {
-    userRepository = new BaseRepository<User>(User);
-    userWTRepository = new BaseRepository<UserWithoutTimestamps>(UserWithoutTimestamps);
+    userRepository = new BaseRepository<Model>(Model);
+    userWTRepository = new BaseRepository<ModelWithoutTimestamps>(ModelWithoutTimestamps);
   });
 
   test('save() should use timestamps with timestamps property === true', async () => {

@@ -1,12 +1,10 @@
-import {
-  User,
-  ModelWithoutFields,
-  ModelWithWrongFields,
-} from './common/User';
+import Model from './common/Model';
+import ModelWithoutFields from './common/ModelWithoutFields';
+import ModelWithWrongFields from './common/ModelWithWrongFields';
 import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '../src/constants/error';
 
 describe('test Model class', () => {
-  let user: User;
+  let user: Model;
   const firstName = 'John';
   const lastName = 'Doe';
   const age = 23;
@@ -18,7 +16,7 @@ describe('test Model class', () => {
   };
 
   beforeEach(() => {
-    user = new User(props);
+    user = new Model(props);
   });
 
   test('correct properties setting in parent constructor', () => {
@@ -31,7 +29,7 @@ describe('test Model class', () => {
   });
 
   test('correct fields return from getFields()', () => {
-    expect(User.getFields()).toStrictEqual([
+    expect(Model.getFields()).toStrictEqual([
       {
         dbKey: 'firstName',
         key: 'firstName',
@@ -48,7 +46,7 @@ describe('test Model class', () => {
   });
 
   test('correct fields return from getFieldsKeys()', () => {
-    expect(User.getFieldsKeys()).toStrictEqual(Object.keys(props));
+    expect(Model.getFieldsKeys()).toStrictEqual(Object.keys(props));
   });
 
   test('throw error in costructor of model with wrong fields', () => {

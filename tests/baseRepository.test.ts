@@ -2,10 +2,8 @@
 
 import firebase from 'firebase';
 import BaseRepository from '../src/BaseRepository';
-import {
-  User,
-  UserWithCustomRoute,
-} from './common/User';
+import Model from './common/Model';
+import ModelWithCustomRoute from './common/ModelWithCustomRoute';
 
 const currentDate = new Date();
 
@@ -50,25 +48,25 @@ jest.mock('firebase', () => {
 });
 
 describe('test BaseRepository class', () => {
-  const user = new User(mockData);
-  let userRepository: BaseRepository<User>;
+  const user = new Model(mockData);
+  let userRepository: BaseRepository<Model>;
 
   const isFirebaseRefToBe = (route) => {
     expect(firebase.database().ref).toHaveBeenCalledWith(route);
   };
 
   beforeEach(() => {
-    userRepository = new BaseRepository<User>(User);
+    userRepository = new BaseRepository<Model>(Model);
   });
 
   test('getRoute() short return right route for default class', () => {
-    expect(userRepository.getRoute()).toBe(`${User.name.toLocaleLowerCase()}s`);
+    expect(userRepository.getRoute()).toBe(`${Model.name.toLocaleLowerCase()}s`);
   });
 
   test('getRoute() should return right route for class with custom routeName', () => {
     // eslint-disable-next-line max-len
-    const userWithCustomRouteRepository = new BaseRepository<UserWithCustomRoute>(UserWithCustomRoute);
-    expect(userWithCustomRouteRepository.getRoute()).toBe(UserWithCustomRoute.routeName);
+    const userWithCustomRouteRepository = new BaseRepository<ModelWithCustomRoute>(ModelWithCustomRoute);
+    expect(userWithCustomRouteRepository.getRoute()).toBe(ModelWithCustomRoute.routeName);
   });
 
   test('get() should return data', async () => {
