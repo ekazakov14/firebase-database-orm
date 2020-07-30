@@ -6,8 +6,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'awesome-typescript-loader',
+        test: /\.ts$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
     ],
@@ -17,7 +17,7 @@ module.exports = {
   },
   devtool: 'source-map',
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.ts', '.js'],
   },
   devServer: {
     host: 'localhost',
