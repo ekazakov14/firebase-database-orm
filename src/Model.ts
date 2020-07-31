@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import PropertiesOf from './types/PropertiesOf';
-import OnlyPropertiesKeysOf from './types/OnlyPropertiesKeysOf';
-import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from './constants/error';
-import { FIELDS_KEY } from './constants/model';
-import FieldDescriptor from './types/FieldDescriptor';
+import PropertiesOf from '@type/PropertiesOf';
+import OnlyPropertiesKeysOf from '@type/OnlyPropertiesKeysOf';
+import FieldDescriptor from '@type/FieldDescriptor';
+import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '@constants/error';
+import { FIELDS_KEY } from '@constants/model';
 
 abstract class Model<T> {
   public static routeName: string;

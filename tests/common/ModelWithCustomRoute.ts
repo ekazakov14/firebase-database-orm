@@ -1,5 +1,5 @@
-import Model from '../../src/Model';
-import Field from '../../src/decorators/Field';
+import Model from '@root/Model';
+import Field from '@decorators/Field';
 
 class ModelWithCustomRoute extends Model<ModelWithCustomRoute> {
   public static routeName = '123';

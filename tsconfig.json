@@ -4,6 +4,13 @@
     "module": "esnext",
     "target": "es5",
     "allowJs": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@root/*": ["*"],
+      "@constants/*": ["constants/*"],
+      "@decorators/*": ["decorators/*"],
+      "@type/*": ["types/*"],
+    },
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "lib": [

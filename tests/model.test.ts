@@ -1,7 +1,7 @@
 import Model from './common/Model';
 import ModelWithoutFields from './common/ModelWithoutFields';
 import ModelWithWrongFields from './common/ModelWithWrongFields';
-import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '../src/constants/error';
+import { WRONG_PROPERTIES, EMPTY_FIELDS_MODEL } from '@constants/error';
 
 describe('test Model class', () => {
   let user: Model;

@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file */
 
 import firebase from 'firebase';
-import BaseRepository from '../src/BaseRepository';
+import BaseRepository from '@root/BaseRepository';
 import Model from './common/Model';
 import ModelWithoutTimestamps from './common/ModelWithoutTImestamps';
-import UnixTimestamps from '../src/types/UnixTimestamps';
+import UnixTimestamps from '@type/UnixTimestamps';
 
 const currentDate = new Date();
 

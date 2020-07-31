@@ -1,5 +1,5 @@
-import AbstractModel from '../../src/Model';
-import Field from '../../src/decorators/Field';
+import AbstractModel from '@root/Model';
+import Field from '@decorators/Field';
 
 class Model extends AbstractModel<Model> {
   @Field()

@@ -1,12 +1,12 @@
 import firebase from 'firebase';
-import ProcessedProperties from './types/ProcessedProperties';
-import PropertiesToWrite from './types/PropertiesToWrite';
-import FirebaseKey from './types/FirebaseKey';
-import ClassExtendedModel from './types/ClassExtendedModel';
-import Model from './Model';
-import UnixTimestamps from './types/UnixTimestamps';
-import PropertiesOf from './types/PropertiesOf';
-import DateTimestamps from './types/DateTimestamps';
+import ProcessedProperties from '@type/ProcessedProperties';
+import PropertiesToWrite from '@type/PropertiesToWrite';
+import FirebaseKey from '@type/FirebaseKey';
+import ClassExtendedModel from '@type/ClassExtendedModel';
+import Model from '@root/Model';
+import UnixTimestamps from '@type/UnixTimestamps';
+import PropertiesOf from '@type/PropertiesOf';
+import DateTimestamps from '@type/DateTimestamps';
 
 class BaseRepository<T extends Model<T>> {
   public constructor(protected modelConstructor: ClassExtendedModel<T>) {

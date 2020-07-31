@@ -18,6 +18,12 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     extensions: ['.ts', '.js'],
+    alias: {
+      '@root': path.resolve(__dirname, 'src'),
+      '@constants': path.resolve(__dirname, 'src/constants'),
+      '@decorators': path.resolve(__dirname, 'src/decorators'),
+      '@type': path.resolve(__dirname, 'src/types'),
+    },
   },
   devServer: {
     host: 'localhost',

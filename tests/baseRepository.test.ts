@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 import firebase from 'firebase';
-import BaseRepository from '../src/BaseRepository';
+import BaseRepository from '@root/BaseRepository';
 import Model from './common/Model';
 import ModelWithCustomRoute from './common/ModelWithCustomRoute';
 
