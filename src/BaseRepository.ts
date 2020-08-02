@@ -2,14 +2,15 @@ import firebase from 'firebase';
 import ProcessedProperties from '@type/ProcessedProperties';
 import PropertiesToWrite from '@type/PropertiesToWrite';
 import FirebaseKey from '@type/FirebaseKey';
-import ClassExtendedModel from '@type/ClassExtendedModel';
+import ConstructorOf from '@root/types/ConstructorOf';
 import Model from '@root/Model';
 import UnixTimestamps from '@type/UnixTimestamps';
+import ModelStaticProperties from '@type/ModelStaticProperties';
 import PropertiesOf from '@type/PropertiesOf';
 import DateTimestamps from '@type/DateTimestamps';
 
 class BaseRepository<T extends Model<T>> {
-  public constructor(protected modelConstructor: ClassExtendedModel<T>) {
+  public constructor(protected modelConstructor: ConstructorOf<T, ModelStaticProperties>) {
   }
 
   public getRoute(additional?: string): string {
