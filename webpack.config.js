@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
   entry: './src/index.ts',
@@ -7,9 +9,13 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        loader: 'ts-loader',
         exclude: /node_modules/,
-      },
+        options: {
+          transpileOnly: true,
+          happyPackMode: true,
+        },
+      }
     ],
   },
   watchOptions: {
@@ -32,5 +38,6 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin(),
   ],
 };

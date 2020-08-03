@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "webpack-dev-server --watch --mode=development --port=3000 --hot --inline",
+    "start": "webpack-dev-server --watch --mode=development --port=3000",
     "lint": "eslint --ext .ts ./",
     "lint:fix": "eslint --fix --ext .ts ./",
     "build": "webpack --mode=production"
@@ -29,6 +29,7 @@
     "eslint": "^7.4.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-plugin-import": "^2.20.1",
+    "fork-ts-checker-webpack-plugin": "^5.0.14",
     "html-webpack-plugin": "^4.3.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
