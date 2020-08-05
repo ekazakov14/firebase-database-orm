@@ -1,6 +1,7 @@
+import FieldOptions from './FieldOptions';
+
 type FieldDescriptor = {
-  key?: string,
-  dbKey?: string,
-};
+  key: string,
+} & FieldOptions;
 
 export default FieldDescriptor;

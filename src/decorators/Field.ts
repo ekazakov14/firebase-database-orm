@@ -1,7 +1,7 @@
 import FieldDescriptor from '../types/FieldDescriptor';
-import FieldOption from '../types/FieldOption';
+import FieldOptions from '../types/FieldOptions';
 
-const Field = (options: FieldOption = {}) => (target: any, key: string): void => {
+const Field = (options: FieldOptions = {}) => (target: any, key: string): void => {
   const { constructor } = target;
 
   const fields = Reflect.getMetadata('fields', constructor);
