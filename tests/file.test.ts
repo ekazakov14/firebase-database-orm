@@ -18,6 +18,7 @@ jest.mock('firebase', () => {
     storage: jest.fn().mockReturnValue({
       ref: jest.fn().mockReturnThis(),
       child: jest.fn((path: string) => ({
+        getMetadata: jest.fn(),
         getDownloadURL: jest.fn(() => '1'),
         put: jest.fn(() => returned(path)),
       })),
