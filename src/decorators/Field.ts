@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import FieldDescriptor from '../types/FieldDescriptor';
 import FieldOptions from '../types/FieldOptions';
 
