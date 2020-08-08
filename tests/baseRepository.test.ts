@@ -90,7 +90,7 @@ describe('test BaseRepository class', () => {
     const findObj = { [field]: value };
 
     const findedObj = await userRepository.find(findObj);
-    expect(findedObj).toStrictEqual([findObj]);
+    expect(findedObj).toMatchObject([findObj]);
   });
 
   test('find() should use right route', async () => {

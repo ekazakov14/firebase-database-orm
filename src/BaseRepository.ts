@@ -37,7 +37,7 @@ class BaseRepository<T extends Model<T>> {
     return key ? this.set(entity, key) : this.push(entity);
   }
 
-  public async find(condition: Partial<PropertiesToWrite<T>>): Promise<any> {
+  public async find(condition: Partial<PropertiesToWrite<T>>): Promise<ProcessedProperties<T>[]|null> {
     const firstKey = Object.keys(condition)[0];
     const snapshot = await
     firebase.database()
@@ -47,7 +47,8 @@ class BaseRepository<T extends Model<T>> {
       .once('value');
 
     const value = snapshot.val();
-    return value ? Object.values(value) : null;
+    const items = value ? Object.values(value) as PropertiesToWrite<T>[] : null;
+    return items ? items.map((props) => this.getProcessedProps(props)) : null;
   }
 
   protected async push(entity: T): Promise<FirebaseKey> {
