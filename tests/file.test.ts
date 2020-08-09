@@ -42,6 +42,12 @@ describe('test Model class', () => {
     expect(firebase.storage().ref().child).toHaveBeenCalledWith(customKey);
   });
 
+  test('get() should return url', async () => {
+    const response = await FileModel.get(customKey);
+
+    expect(typeof response.url).toBe('string');
+  });
+
   test('getUrl() should return ref.fullpath', async () => {
     const key = await FileModel.getUrl(customKey);
 

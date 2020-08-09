@@ -7,7 +7,13 @@ class FileModel {
   }
 
   public static async get(id: string): Promise<any> {
-    return this.child(id).getMetadata();
+    const metaPromise = this.child(id).getMetadata();
+    const urlPromise = this.getUrl(id);
+
+    return Promise.all([metaPromise, urlPromise]).then(([meta, url]) => ({
+      ...meta,
+      url,
+    }));
   }
 
   public static async getUrl(id: string): Promise<string> {
