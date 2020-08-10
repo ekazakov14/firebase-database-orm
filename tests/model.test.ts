@@ -49,6 +49,15 @@ describe('test Model class', () => {
     expect(Model.getFieldsKeys()).toStrictEqual(Object.keys(props));
   });
 
+  test('getFields() shoul use filter param', () => {
+    expect(Model.getFields({ dbKey: 'db_age' })).toStrictEqual([
+      {
+        dbKey: 'db_age',
+        key: 'age',
+      },
+    ]);
+  });
+
   test('throw error in costructor of model with wrong fields', () => {
     const expectedError = new Error(WRONG_PROPERTIES);
     const error = () => new ModelWithWrongFields({
