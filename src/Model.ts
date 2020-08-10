@@ -37,8 +37,12 @@ abstract class Model<T> {
     }), {});
   }
 
-  public static getFields(): FieldDescriptor[] {
-    return Reflect.getMetadata(FIELDS_KEY, this) as FieldDescriptor[];
+  public static getFields(
+    filter: Partial<FieldDescriptor> = {},
+  ): FieldDescriptor[] {
+    const fields = Reflect.getMetadata(FIELDS_KEY, this) as FieldDescriptor[];
+
+    return Object.keys(filter).reduce((resultFields: FieldDescriptor[], key) => resultFields.filter((field) => field[key] === filter[key]), fields);
   }
 
   public static getFieldsKeys(): string[]|null {
