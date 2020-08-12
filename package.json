@@ -7,7 +7,7 @@
     "test": "jest",
     "start": "webpack-dev-server --watch --mode=development --port=3000",
     "lint": "eslint",
-    "lint:fix": "eslint --fix",
+    "lint:fix": "eslint --ext .ts ./ --fix",
     "build": "webpack --mode=production"
   },
   "husky": {
@@ -16,7 +16,7 @@
     }
   },
   "lint-staged": {
-    "*.(ts)": ["npm run lint:fix"]
+    "*.(ts)": ["npm run lint"]
   },
   "author": "",
   "license": "ISC",
