@@ -1,4 +1,5 @@
 type FieldOption = {
+  type?: 'value' | 'file',
   dbKey?: string,
 };
 

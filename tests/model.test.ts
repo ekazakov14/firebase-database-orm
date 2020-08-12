@@ -33,14 +33,17 @@ describe('test Model class', () => {
       {
         dbKey: 'firstName',
         key: 'firstName',
+        type: 'value',
       },
       {
         dbKey: 'lastName',
         key: 'lastName',
+        type: 'value',
       },
       {
         dbKey: 'db_age',
         key: 'age',
+        type: 'value',
       },
     ]);
   });
@@ -54,6 +57,7 @@ describe('test Model class', () => {
       {
         dbKey: 'db_age',
         key: 'age',
+        type: 'value',
       },
     ]);
   });

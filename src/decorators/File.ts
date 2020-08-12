@@ -1,0 +1,9 @@
+import FieldOptions from '@type/FieldOptions';
+import Field from './Field';
+
+const File = (options: FieldOptions = { type: 'file' }) => Field({
+  ...options,
+  type: 'file',
+});
+
+export default File;
