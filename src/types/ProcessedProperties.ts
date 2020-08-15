@@ -1,6 +1,6 @@
 import DateTimestamps from './DateTimestamps';
-import PropertiesOf from './PropertiesOf';
+import ProcessedFileProperties from './ProcessedFileProperties';
 
-type ProcessedProperties<T> = PropertiesOf<T> & DateTimestamps;
+type ProcessedProperties<T> = ProcessedFileProperties<T> & DateTimestamps;
 
 export default ProcessedProperties;

@@ -9,7 +9,9 @@ import ModelStaticProperties from '@type/ModelStaticProperties';
 import PropertiesOf from '@type/PropertiesOf';
 import DateTimestamps from '@type/DateTimestamps';
 import FileModel from '@root/File';
-import PreparedFileProperties from './types/PreparedFileProperties';
+import PreparedFileProperties from '@type/PreparedFileProperties';
+import ProcessedFileProperties from '@type/ProcessedFileProperties';
+import ResponseProperties from '@type/ResponseProperties';
 
 class BaseRepository<T extends Model<T>> {
   public constructor(protected modelConstructor: ConstructorOf<T, ModelStaticProperties>) {
@@ -20,17 +22,18 @@ class BaseRepository<T extends Model<T>> {
     return additional ? `${baseRoute}/${additional}` : baseRoute;
   }
 
-  public async getAll(): Promise<ProcessedProperties<T>[] | []> {
+  public async getAll(): Promise<ResponseProperties<T>[] | []> {
     const response = await firebase.database().ref(this.getRoute()).once('value');
     let value = await response.val();
     value = value ? Object.values(value) : [];
 
-    return value.map((props) => this.getProcessedProps(props));
+    const processPromises = value.map((props: PropertiesOf<T>) => this.getProcessedProps(props));
+    return Promise.all(processPromises);
   }
 
-  public async get(key: FirebaseKey): Promise<ProcessedProperties<T> | null> {
+  public async get(key: FirebaseKey): Promise<ResponseProperties<T> | null> {
     const response = await firebase.database().ref(`${this.getRoute()}/${key}`).once('value');
-    const value = response.val() as PreparedProperties<T>;
+    const value = response.val() as PropertiesOf<T>;
 
     return value ? this.getProcessedProps(value) : null;
   }
@@ -39,7 +42,7 @@ class BaseRepository<T extends Model<T>> {
     return key ? this.set(entity, key) : this.push(entity);
   }
 
-  public async find(condition: Partial<PreparedProperties<T>>): Promise<ProcessedProperties<T>[]|null> {
+  public async find(condition: Partial<PreparedProperties<T>>): Promise<ResponseProperties<T>[] | null> {
     const firstKey = Object.keys(condition)[0];
     const snapshot = await
     firebase.database()
@@ -49,7 +52,7 @@ class BaseRepository<T extends Model<T>> {
       .once('value');
 
     const value = snapshot.val();
-    const items = value ? Object.values(value) as PreparedProperties<T>[] : null;
+    const items = value ? Object.values(value) as PropertiesOf<T>[] : null;
 
     if (items) {
       const promises = items.map((props) => this.getProcessedProps(props));
@@ -69,34 +72,34 @@ class BaseRepository<T extends Model<T>> {
 
   protected async set(entity: T, key: FirebaseKey): Promise<FirebaseKey> {
     const existingValue = await this.get(key);
-    let props: PropertiesOf<T>|PreparedProperties<T> = entity.getProps();
+    let props: PropertiesOf<T>|PreparedProperties<PropertiesOf<T>> = entity.getProps();
 
     if (existingValue) {
-      props = await this.getPreparedProps(props, +existingValue.createdAt);
+      props = await this.getPreparedProps<PropertiesOf<T>>(props, +existingValue.createdAt);
     }
 
     await firebase.database().ref(`${this.getRoute()}/${key}`).set(props);
     return key;
   }
 
-  protected getPreparedProps = async (data: PropertiesOf<T>, createdAt?: number): Promise<PreparedProperties<T>> => {
-    let processedData = data;
-    const isTimestampsNeeded = this.modelConstructor.timestamps;
+  protected async getPreparedProps<P extends object>(data: P, createdAt?: number): Promise<PreparedProperties<P>> {
+    let preparedData = data;
 
-    if (isTimestampsNeeded) {
+    if (this.modelConstructor.timestamps) {
       const timestamps = this.getTimestamps(createdAt);
 
-      processedData = {
-        ...data,
+      preparedData = {
+        ...preparedData,
         ...timestamps,
       };
     }
 
-    return this.prepareFiles(processedData);
-  };
+    const f = this.prepareFiles(preparedData);
+    return f;
+  }
 
-  protected async prepareFiles(props: PropertiesOf<T>): Promise<PreparedFileProperties<T>> {
-    const resultProps: PreparedFileProperties<T> = props;
+  protected async prepareFiles<P extends object>(props: P): Promise<PreparedFileProperties<P>> {
+    const resultProps = props;
     const filePromises: Promise<string>[] = [];
 
     const fileFields = this.modelConstructor.getFields({ type: 'file' });
@@ -111,25 +114,20 @@ class BaseRepository<T extends Model<T>> {
     });
 
     await Promise.all(filePromises);
-    return resultProps;
+    return resultProps as PreparedFileProperties<P>;
   }
 
-  protected getProcessedProps = async (props: PreparedProperties<T>): Promise<ProcessedProperties<T>> => {
-    const { createdAt, updatedAt, ...data } = props;
-    let processedData = data as PropertiesOf<T>;
+  protected getProcessedProps = async <P extends object>(props: P): Promise<ProcessedProperties<P>> => {
+    let processedProps: P|ProcessedProperties<P> = props;
 
     if (this.modelConstructor.timestamps) {
-      const parsedTimestamps = this.parseTimestamps({ createdAt, updatedAt });
-      processedData = {
-        ...processedData,
-        ...parsedTimestamps,
-      };
+      processedProps = this.parseTimestamps<P>(processedProps);
     }
 
-    return this.processFiles(processedData);
+    return this.processFiles<P>(processedProps);
   };
 
-  protected async processFiles(props: PreparedProperties<T>): Promise<PropertiesOf<T>> {
+  protected async processFiles<P extends object>(props: P): Promise<ProcessedFileProperties<P>> {
     const resultProps = props;
     const filePromises: Promise<any>[] = [];
 
@@ -144,7 +142,7 @@ class BaseRepository<T extends Model<T>> {
     });
 
     await Promise.all(filePromises);
-    return resultProps as PropertiesOf<T>;
+    return resultProps as ProcessedFileProperties<P>;
   }
 
   protected getTimestamps = (createdAt?: number): UnixTimestamps => {
@@ -156,10 +154,15 @@ class BaseRepository<T extends Model<T>> {
     };
   };
 
-  protected parseTimestamps = ({ createdAt, updatedAt }: UnixTimestamps): DateTimestamps => ({
-    createdAt: new Date(createdAt),
-    updatedAt: new Date(updatedAt),
-  });
+  protected parseTimestamps = <P extends UnixTimestamps>(props: P): P & DateTimestamps => {
+    const { createdAt, updatedAt } = props;
+
+    return {
+      ...props,
+      createdAt: new Date(createdAt),
+      updatedAt: new Date(updatedAt),
+    };
+  };
 }
 
 export default BaseRepository;

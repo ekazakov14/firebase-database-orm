@@ -1,7 +1,7 @@
 {
   "extends": ["airbnb-typescript/base"],
   "rules": {
-    "max-len": ["warn", {"code": 120}]
+    "max-len": ["warn", {"code": 125}]
   },
   "parserOptions": {
     "project": "./tsconfig.json"
