@@ -2,12 +2,13 @@ import firebase from 'firebase';
 import 'firebase/storage';
 import { v4 } from 'uuid';
 import { STORAGE_OBJECT_NOT_FOUND } from '@constants/error';
+import FirebaseFile from '@type/FirebaseFile';
 
 class FileModel {
   constructor(protected file: File) {
   }
 
-  public static async get(id: string): Promise<any> {
+  public static async get(id: string): Promise<FirebaseFile|null> {
     const metaPromise = this.child(id).getMetadata();
     const urlPromise = this.getUrl(id);
 
