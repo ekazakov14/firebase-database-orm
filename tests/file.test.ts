@@ -2,6 +2,7 @@ import firebase from 'firebase';
 import FileModel from '@root/File';
 
 const uuidKey = 'randomkey';
+const fullPath = 'fullPath';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => uuidKey),
@@ -19,7 +20,7 @@ jest.mock('firebase', () => {
       ref: jest.fn().mockReturnThis(),
       child: jest.fn((path: string) => ({
         getMetadata: jest.fn(),
-        getDownloadURL: jest.fn(() => '1'),
+        getDownloadURL: jest.fn(() => fullPath),
         put: jest.fn(() => returned(path)),
       })),
     }),
@@ -51,7 +52,7 @@ describe('test Model class', () => {
   test('getUrl() should return ref.fullpath', async () => {
     const key = await FileModel.getUrl(customKey);
 
-    expect(key).toBe('1');
+    expect(key).toBe(fullPath);
   });
 
   test('save() should use uuid v4 for key generate key without param', async () => {
