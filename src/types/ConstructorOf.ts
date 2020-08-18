@@ -1,4 +1,4 @@
-type ConstructorOf<T, P> = {
+type ConstructorOf<T, P = {}> = {
   new (...args: any): T,
   name: string,
 } & P;
