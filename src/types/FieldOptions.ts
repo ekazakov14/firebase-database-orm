@@ -1,6 +1,6 @@
-type FieldOption = {
+type FieldOptions = {
   type?: 'value' | 'file',
   dbKey?: string,
 };
 
-export default FieldOption;
+export default FieldOptions;
