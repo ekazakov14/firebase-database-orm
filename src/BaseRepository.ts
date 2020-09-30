@@ -1,7 +1,6 @@
 import firebase from 'firebase';
 import ProcessedProperties from '@type/ProcessedProperties';
 import PreparedProperties from '@root/types/PreparedProperties';
-import FirebaseKey from '@type/FirebaseKey';
 import ConstructorOf from '@root/types/ConstructorOf';
 import Model from '@root/Model';
 import UnixTimestamps from '@type/UnixTimestamps';
@@ -31,14 +30,14 @@ class BaseRepository<T extends Model<T>> {
     return Promise.all(processPromises);
   }
 
-  public async get(key: FirebaseKey): Promise<ResponseProperties<T> | null> {
+  public async get(key: string): Promise<ResponseProperties<T> | null> {
     const response = await firebase.database().ref(`${this.getRoute()}/${key}`).once('value');
     const value = response.val() as PropertiesOf<T>;
 
     return value ? this.getProcessedProps(value) : null;
   }
 
-  public save(entity: T, key?: FirebaseKey): Promise<FirebaseKey> {
+  public save(entity: T, key?: string): Promise<string> {
     return key ? this.set(entity, key) : this.push(entity);
   }
 
@@ -62,7 +61,11 @@ class BaseRepository<T extends Model<T>> {
     return null;
   }
 
-  protected async push(entity: T): Promise<FirebaseKey> {
+  public async remove(key: string): Promise<any> {
+    return firebase.database().ref(this.getRoute(key)).remove();
+  }
+
+  protected async push(entity: T): Promise<string> {
     const currentTimestamp = +new Date();
     const props = await this.getPreparedProps(entity.getProps(), currentTimestamp);
 
@@ -70,7 +73,7 @@ class BaseRepository<T extends Model<T>> {
     return response.key;
   }
 
-  protected async set(entity: T, key: FirebaseKey): Promise<FirebaseKey> {
+  protected async set(entity: T, key: string): Promise<string> {
     const existingValue = await this.get(key);
     let props: PropertiesOf<T>|PreparedProperties<PropertiesOf<T>> = entity.getProps();
 
