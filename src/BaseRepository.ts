@@ -85,6 +85,11 @@ class BaseRepository<T extends Model<T>> {
     return key;
   }
 
+  public async update(key: string, props: Partial<PreparedProperties<T>>): Promise<string> {
+    await firebase.database().ref(this.getRoute(key)).update(props);
+    return key;
+  }
+
   protected async getPreparedProps<P extends object>(data: P, createdAt?: number): Promise<PreparedProperties<P>> {
     let preparedData = data;
 
