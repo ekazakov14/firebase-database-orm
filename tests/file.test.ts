@@ -29,40 +29,41 @@ jest.mock('firebase', () => {
 
 describe('test Model class', () => {
   let customKey: string;
-  let file: FileModel;
+  let fileModel: FileModel;
+  let file: File;
 
   beforeEach(() => {
     customKey = 'custom_key';
-    const randomFile = new window.File(['John'], 'Doe');
-    file = new FileModel(randomFile);
+    file = new window.File(['John'], 'Doe');
+    fileModel = new FileModel(customKey);
   });
 
-  test('get() should use firebase child with id', async () => {
-    await FileModel.get(customKey);
+  test('constructor should use uuid v4 for key generate key without param', async () => {
+    const key = new FileModel().getKey();
+
+    expect(key).toBe(uuidKey);
+  });
+
+  test('getData() should use firebase child with id', async () => {
+    await new FileModel(customKey).getData();
 
     expect(firebase.storage().ref().child).toHaveBeenCalledWith(customKey);
   });
 
-  test('get() should return url', async () => {
-    const response = await FileModel.get(customKey);
+  test('getData() should return url', async () => {
+    const response = await new FileModel(customKey).getData();
 
     expect(typeof response.url).toBe('string');
   });
 
   test('getUrl() should return ref.fullpath', async () => {
-    const key = await FileModel.getUrl(customKey);
+    const key = await new FileModel(customKey).getUrl();
 
     expect(key).toBe(fullPath);
   });
 
-  test('save() should use uuid v4 for key generate key without param', async () => {
-    const key = await file.save();
-
-    expect(key).toBe(uuidKey);
-  });
-
-  test('save(key) should use key with put', async () => {
-    const key = await file.save(customKey);
+  test('upload(key) should use key with put', async () => {
+    const key = await fileModel.upload(file);
 
     expect(key).toBe(customKey);
   });

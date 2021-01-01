@@ -1,6 +1,6 @@
 import UnixTimestamps from './UnixTimestamps';
-import PreparedFileProperties from './PreparedFileProperties';
+import PropertiesOf from './PropertiesOf';
 
-type PreparedProperties<T> = PreparedFileProperties<T> & UnixTimestamps;
+type PreparedProperties<T> = PropertiesOf<T> & UnixTimestamps;
 
 export default PreparedProperties;

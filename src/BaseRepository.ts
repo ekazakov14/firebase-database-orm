@@ -8,8 +8,6 @@ import ModelStaticProperties from '@type/ModelStaticProperties';
 import PropertiesOf from '@type/PropertiesOf';
 import DateTimestamps from '@type/DateTimestamps';
 import FileModel from '@root/File';
-import PreparedFileProperties from '@type/PreparedFileProperties';
-import ProcessedFileProperties from '@type/ProcessedFileProperties';
 import ResponseProperties from '@type/ResponseProperties';
 
 class BaseRepository<T extends Model<T>> {
@@ -75,10 +73,10 @@ class BaseRepository<T extends Model<T>> {
 
   protected async set(entity: T, key: string): Promise<string> {
     const existingValue = await this.get(key);
-    let props: PropertiesOf<T>|PreparedProperties<PropertiesOf<T>> = entity.getProps();
+    let props: PropertiesOf<T> = entity.getProps();
 
     if (existingValue) {
-      props = await this.getPreparedProps<PropertiesOf<T>>(props, +existingValue.createdAt);
+      props = await this.getPreparedProps<T>(props, +existingValue.createdAt);
     }
 
     await firebase.database().ref(`${this.getRoute()}/${key}`).set(props);
@@ -90,8 +88,11 @@ class BaseRepository<T extends Model<T>> {
     return key;
   }
 
-  protected async getPreparedProps<P extends object>(data: P, createdAt?: number): Promise<PreparedProperties<P>> {
-    let preparedData = data;
+  protected async getPreparedProps<P extends object>(
+    data: PropertiesOf<P>,
+    createdAt?: number,
+  ): Promise<PreparedProperties<P>> {
+    let preparedData: PreparedProperties<P> = data;
 
     if (this.modelConstructor.timestamps) {
       const timestamps = this.getTimestamps(createdAt);
@@ -102,27 +103,28 @@ class BaseRepository<T extends Model<T>> {
       };
     }
 
-    const f = this.prepareFiles(preparedData);
-    return f;
+    return this.prepareFiles<PropertiesOf<P>>(preparedData);
   }
 
-  protected async prepareFiles<P extends object>(props: P): Promise<PreparedFileProperties<P>> {
-    const resultProps = props;
+  protected async prepareFiles<P extends object>(props: P): Promise<P> {
+    const resultProps: P = props;
     const filePromises: Promise<string>[] = [];
 
     const fileFields = this.modelConstructor.getFields({ type: 'file' });
     fileFields.forEach((fieldMeta) => {
-      const fieldKey = fieldMeta.key;
-      const file = new FileModel(props[fieldKey]);
-      const promise = file.save().then((fileKey) => {
-        resultProps[fieldKey] = fileKey;
-        return fileKey;
-      });
+      const { key } = fieldMeta;
+      const fileModel = props[key] as FileModel;
+      const promise = fileModel
+        .upload()
+        .then((fileKey) => {
+          resultProps[key] = fileKey;
+          return fileKey;
+        });
       filePromises.push(promise);
     });
 
     await Promise.all(filePromises);
-    return resultProps as PreparedFileProperties<P>;
+    return resultProps;
   }
 
   protected getProcessedProps = async <P extends object>(props: P): Promise<ProcessedProperties<P>> => {
@@ -132,25 +134,19 @@ class BaseRepository<T extends Model<T>> {
       processedProps = this.parseTimestamps<P>(processedProps);
     }
 
-    return this.processFiles<P>(processedProps);
+    return this.processFiles(processedProps);
   };
 
-  protected async processFiles<P extends object>(props: P): Promise<ProcessedFileProperties<P>> {
+  protected async processFiles<P extends object>(props: P): Promise<ProcessedProperties<P>> {
     const resultProps = props;
-    const filePromises: Promise<any>[] = [];
 
     const fileFields = this.modelConstructor.getFields({ type: 'file' });
     fileFields.forEach((fieldMeta) => {
-      const fieldKey = fieldMeta.key;
-      const promise = FileModel.get(resultProps[fieldKey]).then((file) => {
-        resultProps[fieldKey] = file;
-        return file;
-      });
-      filePromises.push(promise);
+      const { key } = fieldMeta;
+      resultProps[key] = new FileModel(resultProps[key]);
     });
 
-    await Promise.all(filePromises);
-    return resultProps as ProcessedFileProperties<P>;
+    return resultProps as ProcessedProperties<P>;
   }
 
   protected getTimestamps = (createdAt?: number): UnixTimestamps => {

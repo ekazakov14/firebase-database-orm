@@ -4,16 +4,21 @@ import { v4 } from 'uuid';
 import { STORAGE_OBJECT_NOT_FOUND } from '@constants/error';
 import FirebaseFile from '@type/FirebaseFile';
 
+const child = (key: string): firebase.storage.Reference => firebase.storage().ref().child(key);
+
 class FileModel {
-  constructor(protected file: File) {
+  protected file: File;
+
+  constructor(protected key: string = v4()) {
   }
 
-  public static async get(id: string): Promise<FirebaseFile|null> {
-    const metaPromise = this.child(id).getMetadata();
-    const urlPromise = this.getUrl(id);
+  public async getData(): Promise<FirebaseFile|null> {
+    const metaPromise = this.getMetadata();
+    const urlPromise = this.getUrl();
 
     try {
       const [meta, url] = await Promise.all([metaPromise, urlPromise]);
+
       return {
         ...meta,
         url,
@@ -28,9 +33,13 @@ class FileModel {
     }
   }
 
-  public static async getUrl(id: string): Promise<string|null> {
+  public async getMetadata(): Promise<firebase.storage.FullMetadata> {
+    return child(this.key).getMetadata();
+  }
+
+  public async getUrl(): Promise<string|null> {
     try {
-      return await this.child(id).getDownloadURL();
+      return child(this.key).getDownloadURL();
     } catch (error) {
       // eslint-disable-next-line no-underscore-dangle
       if (error.code_ === STORAGE_OBJECT_NOT_FOUND) {
@@ -41,13 +50,24 @@ class FileModel {
     }
   }
 
-  public async save(id: string = v4()): Promise<string> {
-    const snapshot = await FileModel.child(id).put(this.file);
+  public async upload(file?: File): Promise<string> {
+    const fileToUpload = file !== undefined ? file : this.getFile();
+    const snapshot = await child(this.key).put(fileToUpload);
+
     return snapshot.ref.fullPath;
   }
 
-  protected static child(id: string): firebase.storage.Reference {
-    return firebase.storage().ref().child(id);
+  public setFile(file: File) {
+    this.file = file;
+    return this;
+  }
+
+  public getFile() {
+    return this.file;
+  }
+
+  public getKey(): string {
+    return this.key;
   }
 }
 
