@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest",
     "start": "webpack-dev-server --watch --mode=development --port=3000",
-    "lint": "eslint",
-    "lint:fix": "eslint --ext .ts ./ --fix",
+    "lint": "eslint --ext .ts ./",
+    "lint:fix": "yarn lint --fix",
     "build": "webpack --mode=production"
   },
   "husky": {
