@@ -2,7 +2,7 @@
 
 import firebase from 'firebase';
 import BaseRepository from '@root/BaseRepository';
-import UnixTimestamps from '@type/UnixTimestamps';
+import UnixTimestamps from '@type/timestamps/UnixTimestamps';
 import Model from './common/Model';
 import ModelWithoutTimestamps from './common/ModelWithoutTImestamps';
 

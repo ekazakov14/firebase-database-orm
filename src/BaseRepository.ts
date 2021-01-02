@@ -1,14 +1,16 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
 import ProcessedProperties from '@type/ProcessedProperties';
 import PreparedProperties from '@root/types/PreparedProperties';
 import ConstructorOf from '@root/types/ConstructorOf';
 import Model from '@root/Model';
-import UnixTimestamps from '@type/UnixTimestamps';
+import UnixTimestamps from '@type/timestamps/UnixTimestamps';
+import DateTimestamps from '@type/timestamps/DateTimestamps';
 import ModelStaticProperties from '@type/ModelStaticProperties';
 import PropertiesOf from '@type/PropertiesOf';
-import DateTimestamps from '@type/DateTimestamps';
 import FileModel from '@root/File';
 import ResponseProperties from '@type/ResponseProperties';
+import RawTimestamps from './types/timestamps/RawTimestamps';
 
 class BaseRepository<T extends Model<T>> {
   public constructor(protected modelConstructor: ConstructorOf<T, ModelStaticProperties>) {
@@ -64,10 +66,9 @@ class BaseRepository<T extends Model<T>> {
   }
 
   protected async push(entity: T): Promise<string> {
-    const currentTimestamp = +new Date();
-    const props = await this.getPreparedProps(entity.getProps(), currentTimestamp);
-
+    const props = await this.getPreparedProps(entity.getProps());
     const response = await firebase.database().ref(this.getRoute()).push(props);
+
     return response.key;
   }
 
@@ -90,7 +91,7 @@ class BaseRepository<T extends Model<T>> {
 
   protected async getPreparedProps<P extends object>(
     data: PropertiesOf<P>,
-    createdAt?: number,
+    createdAt: RawTimestamps['createdAt'] = firebase.database.ServerValue.TIMESTAMP,
   ): Promise<PreparedProperties<P>> {
     let preparedData: PreparedProperties<P> = data;
 
@@ -149,7 +150,7 @@ class BaseRepository<T extends Model<T>> {
     return resultProps as ProcessedProperties<P>;
   }
 
-  protected getTimestamps = (createdAt?: number): UnixTimestamps => {
+  protected getTimestamps = (createdAt?: RawTimestamps['createdAt']): RawTimestamps => {
     const currentTimestamp = +new Date();
 
     return {

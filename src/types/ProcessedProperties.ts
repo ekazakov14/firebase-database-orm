@@ -1,4 +1,4 @@
-import DateTimestamps from './DateTimestamps';
+import DateTimestamps from './timestamps/DateTimestamps';
 import PropertiesOf from './PropertiesOf';
 
 type ProcessedProperties<T> = PropertiesOf<T> & DateTimestamps;

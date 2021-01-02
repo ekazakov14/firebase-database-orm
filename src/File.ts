@@ -1,4 +1,4 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import 'firebase/storage';
 import { v4 } from 'uuid';
 import { STORAGE_OBJECT_NOT_FOUND } from '@constants/error';
