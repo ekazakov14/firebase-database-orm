@@ -42,18 +42,35 @@ class BaseRepository<T extends Model<T>> {
   }
 
   public async find(condition: Partial<PreparedProperties<T>>): Promise<ResponseProperties<T>[] | null> {
-    const firstKey = Object.keys(condition)[0];
+    const findFieldsKeys = Object.keys(condition);
+    const firstKey = findFieldsKeys[0];
     const snapshot = await
     firebase.database()
       .ref(this.getRoute())
-      .orderByChild(firstKey)
       .equalTo(condition[firstKey])
+      .orderByChild(firstKey)
       .once('value');
 
-    const value = snapshot.val();
-    const items = value ? Object.values(value) as PropertiesOf<T>[] : null;
+    const snapshotValue = snapshot.val();
+    let items = snapshotValue ? Object.values(snapshotValue) as PropertiesOf<T>[] : null;
 
     if (items) {
+      // if condition keys > 1 then filter result array from firebase
+      if (findFieldsKeys.length > 1) {
+        items = items.filter((item) => {
+          for (let i = 1; i < findFieldsKeys.length; i += 1) {
+            const key = findFieldsKeys[i];
+            const value = condition[key];
+
+            if (item[key] !== value) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+      }
+
       const promises = items.map((props) => this.getProcessedProps(props));
       return Promise.all(promises);
     }
