@@ -33,7 +33,7 @@ abstract class Model<T> {
 
     return fields.reduce((obj: any, current: Extract<(OnlyPropertiesKeysOf<T>), string>) => ({
       ...obj,
-      [current]: this[current.toString()],
+      [current]: this[current.toString()] || null,
     }), {});
   }
 
