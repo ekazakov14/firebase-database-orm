@@ -6,7 +6,7 @@ const defaultOptions: FieldOptions = {
   type: 'value',
 };
 
-const Field = ({ type, dbKey }: FieldOptions = defaultOptions) => (target: any, key: string): void => {
+const Field = ({ type, dbKey }: FieldOptions = defaultOptions) => (target: Object, key: string): void => {
   const { constructor } = target;
 
   const fields = Reflect.getMetadata('fields', constructor);
